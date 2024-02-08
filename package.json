@@ -1,0 +1,10 @@
+{
+  "name": "chrome-extension",
+  "version": "1.0.0",
+  "repository": "https://github.com/Chuhj/chrome-extension.git",
+  "author": "Chuhj <chj9574@naver.com>",
+  "license": "MIT",
+  "dependencies": {
+    "chrome-types": "^0.1.261"
+  }
+}

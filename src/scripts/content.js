@@ -29,3 +29,26 @@ async function getFollowingsPosts(username) {
     throw error;
   }
 }
+
+(async function () {
+  try {
+    const lastRequestTime = sessionStorage.getItem('lastRequestTime');
+    const elapsedMinutes = (Date.now() - lastRequestTime) / (60 * 1000);
+    if (elapsedMinutes <= 10) return;
+
+    await chrome.storage.local.set({ loading: true });
+
+    const username = getUsername();
+    if (!username) throw new Error('Username is required.');
+
+    const posts = await getFollowingsPosts(username);
+
+    sessionStorage.setItem('lastRequestTime', Date.now());
+
+    await chrome.storage.local.set({ posts, error: false });
+    await chrome.storage.local.set({ loading: false });
+  } catch (error) {
+    console.error(error);
+    await chrome.storage.local.set({ error: true });
+  }
+})();

@@ -9,8 +9,11 @@
   "content_scripts": [
     {
       "js": ["scripts/content.js"],
-      "matches": ["https://velog.io/*"]
+      "matches": ["<all_urls>"]
     }
   ],
+  "background": {
+    "service_worker": "scripts/service-worker.js"
+  },
   "permissions": ["storage"]
 }

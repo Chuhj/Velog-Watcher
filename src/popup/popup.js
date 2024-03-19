@@ -73,3 +73,68 @@ function showPosts(posts) {
     $postList.appendChild($li);
   }
 }
+
+function showErrorIcon() {
+  const $error = document.querySelector('.error');
+  $error.classList.remove('hidden');
+}
+
+function hideErrorIcon() {
+  const $error = document.querySelector('.error');
+  $error.classList.add('hidden');
+}
+
+function showSpinner() {
+  const $spinner = document.querySelector('.dot-spinner');
+  $spinner.classList.remove('hidden');
+}
+
+function hideSpinner() {
+  const $spinner = document.querySelector('.dot-spinner');
+  $spinner.classList.add('hidden');
+}
+
+chrome.storage.onChanged.addListener((changes) => {
+  for (let [key, { newValue }] of Object.entries(changes)) {
+    switch (key) {
+      case 'posts':
+        showPosts(newValue);
+        break;
+      case 'loading':
+        if (newValue === true) {
+          showSpinner();
+        } else if (!newValue) {
+          hideSpinner();
+        }
+        break;
+      case 'error':
+        if (newValue === true) {
+          showErrorIcon();
+        } else if (!newValue) {
+          hideErrorIcon();
+        }
+        break;
+    }
+  }
+});
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const { posts, error, loading } = await chrome.storage.local.get([
+      'posts',
+      'error',
+      'loading',
+    ]);
+
+    if (posts) showPosts(posts);
+    if (error) showErrorIcon();
+    if (loading) showSpinner();
+
+    await chrome.runtime.sendMessage({
+      type: 'storeFetchedPosts',
+    });
+  } catch (error) {
+    console.error(error);
+    chrome.storage.local.set({ error: true, loading: false });
+  }
+});

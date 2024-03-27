@@ -1,3 +1,4 @@
+const VELOG_DOMAIN = 'velog.io';
 const CURRENT_USER = 'CURRENT_USER';
 
 function getUsernameFromLocalStorage() {
@@ -56,15 +57,17 @@ function waitForUsernameFromDOM() {
 
 (async () => {
   try {
-    const usernameFromLocalStorage = getUsernameFromLocalStorage();
-    const usernameFromDOM = await waitForUsernameFromDOM();
+    if (location.hostname === VELOG_DOMAIN) {
+      const usernameFromLocalStorage = getUsernameFromLocalStorage();
+      const usernameFromDOM = await waitForUsernameFromDOM();
 
-    if (!usernameFromLocalStorage && !usernameFromDOM)
-      throw new Error('Username is required.');
+      if (!usernameFromLocalStorage && !usernameFromDOM)
+        throw new Error('Username is required.');
 
-    await chrome.storage.local.set({
-      username: usernameFromLocalStorage || usernameFromDOM,
-    });
+      await chrome.storage.local.set({
+        username: usernameFromLocalStorage || usernameFromDOM,
+      });
+    }
     await chrome.runtime.sendMessage({ type: 'storeFetchedPosts' });
   } catch (error) {
     console.error(error);

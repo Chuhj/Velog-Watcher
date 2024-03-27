@@ -27,24 +27,6 @@ a {
   text-decoration: none;
 }
 
-.hidden {
-  display: none;
-}
-
-.line-clamp-2 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-
-.line-clamp-1 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-}
-
 .header {
   position: relative;
   display: flex;
@@ -53,6 +35,32 @@ a {
   padding: 12px;
   border-bottom: 1px solid #F2F3F5;
   font-size: 16px;
+}
+
+.velog_link {
+  border-radius: 4px;
+  background-color: #20C997;
+  color: white;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.need_login_msg {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.no_post_msg {
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .post_list {
@@ -207,4 +215,22 @@ a {
     transform: scale(1);
     opacity: 1;
   }
+}
+
+.hidden {
+  display: none;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
 }

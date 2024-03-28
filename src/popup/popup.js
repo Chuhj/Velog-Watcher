@@ -23,6 +23,7 @@ function getTimeAgoString(dateString) {
 
 function showPosts(posts) {
   const $postList = document.querySelector('.post_list');
+  $postList.classList.remove('hidden');
 
   for (const post of posts) {
     const { feedTitle, isoDate, link, profileImage, title } = post;
@@ -74,6 +75,11 @@ function showPosts(posts) {
   }
 }
 
+function hidePosts() {
+  const $postList = document.querySelector('.posts');
+  $postList.classList.add('hidden');
+}
+
 function showErrorIcon() {
   const $error = document.querySelector('.error');
   $error.classList.remove('hidden');
@@ -94,23 +100,59 @@ function hideSpinner() {
   $spinner.classList.add('hidden');
 }
 
+function showNeedLoginMessage() {
+  const $needLoginMessage = document.querySelector('.need_login_msg');
+  $needLoginMessage.classList.remove('hidden');
+}
+
+function hideNeedLoginMessage() {
+  const $needLoginMessage = document.querySelector('.need_login_msg');
+  $needLoginMessage.classList.add('hidden');
+}
+
+function showNoPostMessage() {
+  const $noPostMessage = document.querySelector('.no_post_msg');
+  $noPostMessage.classList.remove('hidden');
+}
+
+function hideNoPostMessage() {
+  const $noPostMessage = document.querySelector('.no_post_msg');
+  $noPostMessage.classList.add('hidden');
+}
+
 chrome.storage.onChanged.addListener((changes) => {
   for (let [key, { newValue }] of Object.entries(changes)) {
     switch (key) {
+      case 'username':
+        if (!newValue) {
+          hidePosts();
+          hideNoPostMessage();
+          showNeedLoginMessage();
+        }
+        break;
       case 'posts':
-        showPosts(newValue);
+        if (newValue && newValue.length > 0) {
+          hideNoPostMessage();
+          hideNeedLoginMessage();
+          showPosts(newValue);
+        } else {
+          hidePosts();
+          hideNoPostMessage();
+          hideNeedLoginMessage();
+          showNoPostMessage();
+        }
         break;
       case 'loading':
         if (newValue === true) {
           showSpinner();
-        } else if (!newValue) {
+        } else {
           hideSpinner();
         }
         break;
       case 'error':
         if (newValue === true) {
           showErrorIcon();
-        } else if (!newValue) {
+        } else {
           hideErrorIcon();
         }
         break;
@@ -120,15 +162,28 @@ chrome.storage.onChanged.addListener((changes) => {
 
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    const { posts, error, loading } = await chrome.storage.local.get([
+    const { username, posts, error, loading } = await chrome.storage.local.get([
+      'username',
       'posts',
       'error',
       'loading',
     ]);
 
-    if (posts) showPosts(posts);
-    if (error) showErrorIcon();
-    if (loading) showSpinner();
+    if (!username) {
+      hideNoPostMessage();
+      showNeedLoginMessage();
+    } else {
+      if (posts && posts.length > 0) {
+        hideNeedLoginMessage();
+        hideNoPostMessage();
+        showPosts(posts);
+      } else {
+        hideNeedLoginMessage();
+        showNoPostMessage();
+      }
+      if (error) showErrorIcon();
+      if (loading) showSpinner();
+    }
 
     await chrome.runtime.sendMessage({
       type: 'storeFetchedPosts',

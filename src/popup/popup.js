@@ -160,6 +160,8 @@ chrome.storage.onChanged.addListener((changes) => {
   }
 });
 
+chrome.action.setBadgeText({ text: '' });
+
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     const { username, posts, error, loading } = await chrome.storage.local.get([
@@ -184,6 +186,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (error) showErrorIcon();
       if (loading) showSpinner();
     }
+
+    await chrome.storage.local.set({ lastPopupVisitTime: Date.now() });
 
     await chrome.runtime.sendMessage({
       type: 'storeFetchedPosts',

@@ -1,3 +1,5 @@
+const BADGE_COLOR = '#D04848';
+
 async function fetchFollowingsPosts(username) {
   try {
     const response = await fetch('http://localhost:3000/posts', {
@@ -23,14 +25,19 @@ function hasTenMinutesPassed(lastRequestTime) {
   return elapsedMinutes > 10;
 }
 
+chrome.action.setBadgeBackgroundColor({ color: BADGE_COLOR });
+
 chrome.runtime.onMessage.addListener((message) => {
   if (message.type !== 'storeFetchedPosts') return;
   (async () => {
     try {
-      const { lastRequestTime, username } = await chrome.storage.local.get([
-        'lastRequestTime',
-        'username',
-      ]);
+      const { lastRequestTime, lastPopupVisitTime, username } =
+        await chrome.storage.local.get([
+          'lastRequestTime',
+          'lastPopupVisitTime',
+          'username',
+        ]);
+
       if (!lastRequestTime || hasTenMinutesPassed(lastRequestTime)) {
         // 첫 요청이거나 10분이 지났을 때
         await chrome.storage.local.set({
@@ -38,6 +45,18 @@ chrome.runtime.onMessage.addListener((message) => {
         });
 
         const posts = await fetchFollowingsPosts(username);
+
+        if (Array.isArray(posts) && posts.length > 0) {
+          // 새로운 글의 개수를 뱃지로 표시
+          const newPostsLength = posts.filter((post) => {
+            const postTime = Date.parse(post.isoDate);
+            return lastPopupVisitTime < postTime;
+          }).length;
+
+          if (newPostsLength > 0) {
+            chrome.action.setBadgeText({ text: newPostsLength.toString() });
+          }
+        }
 
         await chrome.storage.local.set({
           lastRequestTime: Date.now(),

@@ -1,8 +1,9 @@
+const BACKEND_URL = 'https://port-0-velog-754g42aluibcbv0.sel5.cloudtype.app';
 const BADGE_COLOR = '#D04848';
 
 async function fetchFollowingsPosts(username) {
   try {
-    const response = await fetch('http://localhost:3000/posts', {
+    const response = await fetch(`${BACKEND_URL}/posts`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

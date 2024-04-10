@@ -57,12 +57,24 @@ function waitForUsernameFromDOM() {
 
 (async () => {
   try {
+    const { username: prevUsername } = await chrome.storage.local.get(
+      'username'
+    );
+
     if (location.hostname === VELOG_DOMAIN) {
       const usernameFromLocalStorage = getUsernameFromLocalStorage();
       const usernameFromDOM = await waitForUsernameFromDOM();
 
       if (!usernameFromLocalStorage && !usernameFromDOM)
         throw new Error('Username is required.');
+
+      if (
+        prevUsername &&
+        prevUsername !== (usernameFromLocalStorage || usernameFromDOM)
+      ) {
+        // 찾은 username이 기존의 username과 달라졌다면 마지막 요청 시간 초기화
+        await chrome.storage.local.set({ lastRequestTime: null });
+      }
 
       await chrome.storage.local.set({
         username: usernameFromLocalStorage || usernameFromDOM,

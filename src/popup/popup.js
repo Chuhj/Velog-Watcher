@@ -23,6 +23,7 @@ function getTimeAgoString(dateString) {
 
 function showPosts(posts) {
   const $postList = document.querySelector('.post_list');
+  $postList.replaceChildren();
   $postList.classList.remove('hidden');
 
   for (const post of posts) {

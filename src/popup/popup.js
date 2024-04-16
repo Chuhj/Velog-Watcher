@@ -162,6 +162,11 @@ chrome.storage.onChanged.addListener((changes) => {
 });
 
 chrome.action.setBadgeText({ text: '' });
+document.querySelector('.velog_link').addEventListener('click', () => {
+  chrome.tabs.create({ url: 'https://velog.io' }).catch((error) => {
+    console.error(error);
+  });
+});
 
 document.addEventListener('DOMContentLoaded', async () => {
   try {

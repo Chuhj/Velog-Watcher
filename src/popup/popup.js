@@ -76,7 +76,7 @@ function showPosts(posts) {
 }
 
 function hidePosts() {
-  const $postList = document.querySelector('.posts');
+  const $postList = document.querySelector('.post_list');
   $postList.classList.add('hidden');
 }
 

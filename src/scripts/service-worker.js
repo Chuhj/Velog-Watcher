@@ -1,4 +1,4 @@
-const BACKEND_URL = 'https://port-0-velog-754g42aluibcbv0.sel5.cloudtype.app';
+const BACKEND_URL = 'https://blogwatcher.dev';
 const BADGE_COLOR = '#D04848';
 
 async function fetchFollowingsPosts(username) {

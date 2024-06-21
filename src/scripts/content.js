@@ -57,18 +57,16 @@ function waitForUsernameFromDOM() {
 
 (async () => {
   try {
-    const { username: prevUsername, loading } = await chrome.storage.local.get([
-      'username',
-      'loading',
-    ]);
+    const { username: currentUsername, loading } =
+      await chrome.storage.local.get(['username', 'loading']);
 
     if (location.hostname === VELOG_DOMAIN) {
       const usernameFromLocalStorage = getUsernameFromLocalStorage();
       const usernameFromDOM = await waitForUsernameFromDOM();
 
       if (
-        prevUsername &&
-        prevUsername !== (usernameFromLocalStorage || usernameFromDOM)
+        currentUsername &&
+        currentUsername !== (usernameFromLocalStorage || usernameFromDOM)
       ) {
         // 찾은 username이 기존의 username과 달라졌다면 마지막 요청 시간 초기화
         await chrome.storage.local.set({ lastRequestTime: null });
@@ -81,7 +79,7 @@ function waitForUsernameFromDOM() {
       }
     }
 
-    if (prevUsername && !loading) {
+    if (currentUsername && !loading) {
       // username이 있고 로딩중이 아닐 때 요청
       await chrome.runtime.sendMessage({ type: 'storeFetchedPosts' });
     }

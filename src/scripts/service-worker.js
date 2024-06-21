@@ -32,12 +32,15 @@ chrome.runtime.onMessage.addListener((message) => {
   if (message.type !== 'storeFetchedPosts') return;
   (async () => {
     try {
-      const { lastRequestTime, lastPopupVisitTime, username } =
+      const { lastRequestTime, lastPopupVisitTime, username, loading } =
         await chrome.storage.local.get([
           'lastRequestTime',
           'lastPopupVisitTime',
           'username',
+          'loading',
         ]);
+
+      if (!username || loading) return;
 
       if (!lastRequestTime || hasTenMinutesPassed(lastRequestTime)) {
         // 첫 요청이거나 10분이 지났을 때
